@@ -1,7 +1,9 @@
 package ru.dev2dev.sw_android;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -24,6 +26,16 @@ public class MainActivity extends BaseActivity {
 
         listView = (ListView) findViewById(R.id.listView);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Person person = (Person) listView.getAdapter().getItem(position);
+                Intent intent = new Intent(getApplicationContext(), PersonActivity.class)
+                        .putExtra(PersonActivity.PERSON_EXTRA, person);
+                startActivity(intent);
+            }
+        });
 
         showProgress(true);
         API.getApi().getPeople(new Callback<PeopleResponse>() {

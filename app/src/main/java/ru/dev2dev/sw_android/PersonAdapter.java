@@ -14,24 +14,24 @@ import java.util.ArrayList;
  */
 public class PersonAdapter extends BaseAdapter {
 
-    Context mContext;
+    Context context;
     LayoutInflater lInflater;
-    ArrayList<Person> mPersons;
+    ArrayList<Person> persons;
 
     public PersonAdapter(Context context, ArrayList<Person> persons) {
-        mContext = context;
-        mPersons = persons;
+        this.context = context;
+        this.persons = persons;
         lInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public int getCount() {
-        return mPersons.size();
+        return persons.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return mPersons.get(position);
+        return persons.get(position);
     }
 
     @Override
@@ -46,8 +46,7 @@ public class PersonAdapter extends BaseAdapter {
             view = lInflater.inflate(android.R.layout.simple_list_item_1, parent, false);
         }
 
-        Person person = mPersons.get(position);
-
+        Person person = persons.get(position);
         ((TextView) view.findViewById(android.R.id.text1)).setText(person.getName());
 
         return view;

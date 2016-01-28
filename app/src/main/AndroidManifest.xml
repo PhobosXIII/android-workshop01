@@ -19,6 +19,14 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".PersonActivity"
+            android:label="@string/person"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ru.dev2dev.sw_android.MainActivity"/>
+        </activity>
+
     </application>
 
 </manifest>

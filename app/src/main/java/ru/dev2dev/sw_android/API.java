@@ -2,15 +2,9 @@ package ru.dev2dev.sw_android;
 
 import android.os.Build;
 
-import com.squareup.okhttp.OkHttpClient;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
-
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
-import retrofit.client.Request;
 
 /**
  * Created by Dmitriy on 27.01.2016.
@@ -26,9 +20,7 @@ public class API {
             .setRequestInterceptor(new RequestInterceptor() {
                 @Override
                 public void intercept(RequestFacade request) {
-//                    request.addHeader("Accept", "application/json");
-//                    request.addHeader("Content-Type", "application/json");
-                    request.addPathParam("User-Agent", "swapi-Java-SWAPI-JAVA");
+                    request.addHeader("User-Agent", "ws-sw-android-" + Build.VERSION.RELEASE);
                 }
             })
             .build();
