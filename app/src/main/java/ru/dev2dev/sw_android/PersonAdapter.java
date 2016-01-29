@@ -14,12 +14,10 @@ import java.util.ArrayList;
  */
 public class PersonAdapter extends BaseAdapter {
 
-    Context context;
     LayoutInflater lInflater;
     ArrayList<Person> persons;
 
     public PersonAdapter(Context context, ArrayList<Person> persons) {
-        this.context = context;
         this.persons = persons;
         lInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }

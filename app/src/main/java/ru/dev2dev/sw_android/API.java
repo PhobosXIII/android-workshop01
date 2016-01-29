@@ -12,6 +12,7 @@ import retrofit.client.OkClient;
 public class API {
 
     public static final String API_URL = "http://swapi.co/api";
+    public static final String PEOPLE_PATH = "/people/";
 
     private static final RestAdapter adapter = new RestAdapter.Builder()
             .setLogLevel(RestAdapter.LogLevel.FULL)
