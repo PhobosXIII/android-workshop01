@@ -92,7 +92,6 @@ public class MainActivity extends BaseActivity {
 
         @Override
         protected void onPreExecute() {
-            //Отображаем системный диалог загрузки
             progressDialog = new ProgressDialog(MainActivity.this);
             progressDialog.setIndeterminate(false);
             progressDialog.setMax(100);
