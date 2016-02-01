@@ -1,14 +1,10 @@
 package ru.dev2dev.sw_android;
 
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -32,13 +28,6 @@ public class MainActivity extends BaseActivity {
 
     private ListView listView;
     private ProgressBar progressBar;
-    private ArrayList<Person> mPersons;
-
-    private BroadcastReceiver broadcastReceiver;
-
-    public final static String BROADCAST_ACTION = "ru.dev2dev.sw_android.MainActivity";
-    public final static String PEOPLE_EXTRA = "people";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,27 +46,32 @@ public class MainActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-
-        registerBroadcastReceiver();
-        getPeople(savedInstanceState);
+//        getPeople();
+        GetPeopleTask getPeopleTask = new GetPeopleTask();
+        getPeopleTask.execute(API.API_URL+API.PEOPLE_PATH);
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        Log.d(TAG, "onSaveInstanceState(Bundle outState)");
-        super.onSaveInstanceState(outState);
-        outState.putSerializable("persons", mPersons);
-    }
+    private void getPeople() {
+        showProgress(true);
+        API.getApi().getPeople(new Callback<PeopleResponse>() {
+            @Override
+            public void success(PeopleResponse peopleResponse, Response response) {
+                showProgress(false);
+                if (peopleResponse.getPersons()!=null) {
+                    showPersons(peopleResponse.getPersons());
+                }
+            }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        unregisterReceiver(broadcastReceiver);
+            @Override
+            public void failure(RetrofitError error) {
+                showProgress(false);
+                Toast.makeText(getApplicationContext(), error.getLocalizedMessage(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void showPersons(ArrayList<Person> persons) {
-        mPersons = persons;
         PersonAdapter adapter = new PersonAdapter(this, persons);
         listView.setAdapter(adapter);
     }
@@ -92,13 +86,20 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private class GetPeopleTask extends AsyncTask<String, Void, ArrayList<Person>> {
+    private class GetPeopleTask extends AsyncTask<String, Integer, ArrayList<Person>> {
+
+        ProgressDialog progressDialog;
 
         @Override
         protected void onPreExecute() {
-            showProgress(true);
+            progressDialog = new ProgressDialog(MainActivity.this);
+            progressDialog.setIndeterminate(false);
+            progressDialog.setMax(100);
+            progressDialog.setProgress(0);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            progressDialog.setMessage(getString(R.string.please_wait));
+            progressDialog.show();
         }
-
         @Override
         protected ArrayList<Person> doInBackground(String... params) {
 
@@ -115,8 +116,11 @@ public class MainActivity extends BaseActivity {
                 String inputLine;
                 StringBuilder stringBuilder = new StringBuilder();
 
+                int lengthOfFile = connection.getContentLength();
+
                 while ((inputLine = in.readLine()) != null) {
                     stringBuilder.append(inputLine);
+                    publishProgress((int)((stringBuilder.length()*100)/lengthOfFile));
                 }
                 in.close();
 
@@ -136,42 +140,18 @@ public class MainActivity extends BaseActivity {
         }
 
         @Override
+        protected void onProgressUpdate(Integer... progress) {
+            progressDialog.setProgress(progress[0]);
+        }
+
+        @Override
         protected void onPostExecute(ArrayList<Person> result) {
             if (result!=null) {
                 showPersons(result);
             }
-            showProgress(false);
+            progressDialog.dismiss();
         }
 
-    }
-
-    private void registerBroadcastReceiver() {
-        broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, final Intent intent) {
-                showProgress(false);
-                if (intent.getSerializableExtra(PEOPLE_EXTRA)!=null) {
-                    ArrayList<Person> persons = (ArrayList<Person>) intent.getSerializableExtra(PEOPLE_EXTRA);
-                    if (persons!=null) {
-                        showPersons(persons);
-                    }
-                }
-
-            }
-        };
-        IntentFilter intentFilter = new IntentFilter(BROADCAST_ACTION);
-        registerReceiver(broadcastReceiver, intentFilter);
-    }
-
-    private void getPeople(Bundle savedInstanceState) {
-        if (savedInstanceState!=null && savedInstanceState.getSerializable("persons")!=null) {
-            showPersons((ArrayList<Person>) savedInstanceState.getSerializable("persons"));
-        } else {
-//            GetPeopleTask getPeopleTask = new GetPeopleTask();
-//            getPeopleTask.execute(API.API_URL+API.PEOPLE_PATH);
-            startService(new Intent(this, GetPeopleService.class));
-            showProgress(true);
-        }
     }
 
     private Person jsonToPerson(JSONObject jsonObject) {

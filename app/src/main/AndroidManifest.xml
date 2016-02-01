@@ -27,10 +27,6 @@
                 android:value="ru.dev2dev.sw_android.MainActivity"/>
         </activity>
 
-        <service
-            android:name=".GetPeopleService"
-            android:exported="false"/>
-
     </application>
 
 </manifest>

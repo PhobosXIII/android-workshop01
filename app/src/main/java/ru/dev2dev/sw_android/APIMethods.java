@@ -12,6 +12,6 @@ import retrofit.http.QueryMap;
 public interface APIMethods {
 
     @GET(API.PEOPLE_PATH)
-    PeopleResponse getPeople();
+    void getPeople(Callback<PeopleResponse> responseCallback);
 
 }
