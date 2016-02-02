@@ -6,11 +6,7 @@ import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 
-/**
- * Created by Dmitriy on 27.01.2016.
- */
 public class API {
-
     public static final String API_URL = "http://swapi.co/api";
 
     private static final RestAdapter adapter = new RestAdapter.Builder()
@@ -30,5 +26,4 @@ public class API {
     public static APIMethods getApi() {
         return apiMethods;
     }
-
 }

@@ -2,4 +2,9 @@
     <string name="app_name">SW</string>
     <string name="person">Персонаж</string>
     <string name="info">%1$s см, %2$s кг, цвет глаз %3$s.</string>
+
+    <string name="placeholder_name">Имя</string>
+    <string name="placeholder_gender">Пол</string>
+    <string name="placeholder_birth">Дата рождения</string>
+    <string name="placeholder_info">Дополнительная информация</string>
 </resources>

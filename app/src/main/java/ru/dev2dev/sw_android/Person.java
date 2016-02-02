@@ -4,9 +4,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-/**
- * Created by Dmitriy on 27.01.2016.
- */
 public class Person implements Serializable {
 
     private String name;
