@@ -1,20 +1,13 @@
 package ru.dev2dev.sw_android;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.io.Serializable;
 
-/**
- * Created by Dmitriy on 27.01.2016.
- */
 public class Person implements Serializable {
 
     private String name;
     private String height;
     private String mass;
-    @SerializedName("eye_color")
     private String eyeColor;
-    @SerializedName("birth_year")
     private String birthYear;
     private String gender;
 

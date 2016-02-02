@@ -9,9 +9,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-/**
- * Created by Dmitriy on 27.01.2016.
- */
 public class PersonAdapter extends BaseAdapter {
 
     LayoutInflater lInflater;
