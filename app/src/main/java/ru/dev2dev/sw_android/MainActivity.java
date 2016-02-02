@@ -41,7 +41,7 @@ public class MainActivity extends BaseActivity {
 
         if (savedInstanceState != null) {
             people = (ArrayList<Person>) savedInstanceState.getSerializable(KEY_PEOPLE);
-            showPersons(people);
+            showPeople(people);
         }
         else {
             showProgress(true);
@@ -50,7 +50,7 @@ public class MainActivity extends BaseActivity {
                 public void success(PeopleResponse peopleResponse, Response response) {
                     showProgress(false);
                     people = peopleResponse.getPeople();
-                    showPersons(people);
+                    showPeople(people);
                 }
 
                 @Override
@@ -69,9 +69,9 @@ public class MainActivity extends BaseActivity {
         super.onSaveInstanceState(outState);
     }
 
-    private void showPersons(ArrayList<Person> persons) {
-        if (people != null) {
-            PersonAdapter adapter = new PersonAdapter(this, persons);
+    private void showPeople(ArrayList<Person> people) {
+        if (this.people != null) {
+            PersonAdapter adapter = new PersonAdapter(this, people);
             listView.setAdapter(adapter);
         }
     }
