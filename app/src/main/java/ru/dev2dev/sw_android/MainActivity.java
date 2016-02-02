@@ -45,9 +45,11 @@ public class MainActivity extends BaseActivity {
         new GetPeopleTask().execute();
     }
 
-    private void showPersons(ArrayList<Person> persons) {
-        PersonAdapter adapter = new PersonAdapter(this, persons);
-        listView.setAdapter(adapter);
+    private void showPeople(ArrayList<Person> people) {
+        if (people != null) {
+            PersonAdapter adapter = new PersonAdapter(this, people);
+            listView.setAdapter(adapter);
+        }
     }
 
     private void showProgress(boolean isShow) {
@@ -79,24 +81,28 @@ public class MainActivity extends BaseActivity {
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.addRequestProperty("User-Agent", "ws-sw-android-" + Build.VERSION.RELEASE);
                 connection.setRequestMethod("GET");
+                connection.connect();
 
-                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String inputLine;
-                StringBuilder stringBuilder = new StringBuilder();
+                int status = connection.getResponseCode();
+                if (status == 200) {
+                    reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String inputLine;
+                    StringBuilder stringBuilder = new StringBuilder();
 
-                while ((inputLine = reader.readLine()) != null) {
-                    stringBuilder.append(inputLine);
+                    while ((inputLine = reader.readLine()) != null) {
+                        stringBuilder.append(inputLine);
+                    }
+
+                    JSONObject jsonObject = new JSONObject(stringBuilder.toString());
+                    JSONArray results = jsonObject.getJSONArray("results");
+                    ArrayList<Person> people = new ArrayList<>();
+                    for (int i = 0; i < results.length(); i++) {
+                        Person person = jsonToPerson(results.getJSONObject(i));
+                        people.add(person);
+                    }
+
+                    return people;
                 }
-
-                JSONObject jsonObject = new JSONObject(stringBuilder.toString());
-                JSONArray results = jsonObject.getJSONArray("results");
-                ArrayList<Person> persons = new ArrayList<>();
-                for (int i = 0; i < results.length(); i++) {
-                    Person person = jsonToPerson(results.getJSONObject(i));
-                    persons.add(person);
-                }
-
-                return persons;
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -109,15 +115,15 @@ public class MainActivity extends BaseActivity {
                     }
                 }
             }
+
+            return null;
         }
 
         @Override
         protected void onPostExecute(ArrayList<Person> result) {
             Log.d(TAG, "AsyncTask onPostExecute()");
             showProgress(false);
-            if (result!=null) {
-                showPersons(result);
-            }
+            showPeople(result);
         }
     }
 
