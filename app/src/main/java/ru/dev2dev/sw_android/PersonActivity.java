@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.widget.TextView;
 
 public class PersonActivity extends BaseActivity {
-    public static final String PERSON_EXTRA = "person";
+    public static final String EXTRA_PERSON = "person";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -19,8 +19,8 @@ public class PersonActivity extends BaseActivity {
         TextView tvInfo = (TextView) findViewById(R.id.tv_info);
 
         Intent intent = getIntent();
-        if (intent.hasExtra(PERSON_EXTRA)) {
-            Person person = (Person) intent.getSerializableExtra(PERSON_EXTRA);
+        if (intent.hasExtra(EXTRA_PERSON)) {
+            Person person = (Person) intent.getSerializableExtra(EXTRA_PERSON);
             tvName.setText(person.getName());
             tvGender.setText(person.getGender());
             tvBirth.setText(person.getBirthYear());

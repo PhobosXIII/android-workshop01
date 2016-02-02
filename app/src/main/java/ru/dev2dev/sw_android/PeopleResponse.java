@@ -7,9 +7,9 @@ import java.util.ArrayList;
 public class PeopleResponse {
 
     @SerializedName("results")
-    private ArrayList<Person> persons;
+    private ArrayList<Person> people;
 
-    public ArrayList<Person> getPersons() {
-        return persons;
+    public ArrayList<Person> getPeople() {
+        return people;
     }
 }

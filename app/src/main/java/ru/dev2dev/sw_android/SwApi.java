@@ -3,8 +3,7 @@ package ru.dev2dev.sw_android;
 import retrofit.Callback;
 import retrofit.http.GET;
 
-public interface APIMethods {
-
+public interface SwApi {
     @GET("/people/")
-    void getPeople(Callback<PeopleResponse> responseCallback);
+    void getPeople(Callback<PeopleResponse> callback);
 }
