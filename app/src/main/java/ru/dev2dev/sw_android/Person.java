@@ -1,8 +1,10 @@
 package ru.dev2dev.sw_android;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Person implements Serializable {
     private static final long serialVersionUID = 13L;
@@ -85,5 +87,22 @@ public class Person implements Serializable {
         String gender = json.getString("gender");
 
         return new Person(name, height, mass, eyeColor, birthYear, gender);
+    }
+
+    public static ArrayList<Person> getList(String json) {
+        ArrayList<Person> people = null;
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            JSONArray results = jsonObject.getJSONArray("results");
+            people = new ArrayList<>();
+            for (int i = 0; i < results.length(); i++) {
+                Person person = Person.fromJson(results.getJSONObject(i));
+                people.add(person);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return people;
     }
 }
