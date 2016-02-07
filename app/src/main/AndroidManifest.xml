@@ -21,6 +21,8 @@
 
         <activity android:name=".PersonActivity"
             android:label="@string/title_person_activity"/>
+
+        <service android:name=".SwService"/>
     </application>
 
 </manifest>

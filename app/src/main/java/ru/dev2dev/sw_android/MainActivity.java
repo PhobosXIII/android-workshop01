@@ -1,30 +1,30 @@
 package ru.dev2dev.sw_android;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Build;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class MainActivity extends BaseActivity {
     private ListView listView;
     private ProgressBar progressBar;
+
+    private BroadcastReceiver peopleReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ArrayList<Person> people = (ArrayList<Person>) intent.getSerializableExtra(SwService.EXTRA_PEOPLE);
+            showPeople(people);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +43,22 @@ public class MainActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
+    }
 
-        new GetPeopleTask().execute();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter ifPeople = new IntentFilter(SwService.ACTION_GET_PEOPLE);
+        LocalBroadcastManager.getInstance(this).registerReceiver(peopleReceiver, ifPeople);
+
+        showProgress(true);
+        SwService.getPeople(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(peopleReceiver);
     }
 
     private void showPeople(ArrayList<Person> people) {
@@ -63,53 +77,6 @@ public class MainActivity extends BaseActivity {
         } else {
             listView.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
-        }
-    }
-
-    private class GetPeopleTask extends AsyncTask<Void, Void, ArrayList<Person>> {
-
-        @Override
-        protected void onPreExecute() {
-            Log.d(TAG, "AsyncTask onPreExecute()");
-            showProgress(true);
-        }
-        @Override
-        protected ArrayList<Person> doInBackground(Void... params) {
-            Log.d(TAG, "AsyncTask doInBackground()");
-
-            String url = "http://swapi.co/api/people/";
-            OkHttpClient client = new OkHttpClient();
-
-            try {
-                Request request = new Request.Builder()
-                        .url(url)
-                        .addHeader("User-Agent", "ws-sw-android-" + Build.VERSION.RELEASE)
-                        .build();
-                Response response = client.newCall(request).execute();
-                String body = response.body().string();
-
-                JSONObject jsonObject = new JSONObject(body);
-                JSONArray results = jsonObject.getJSONArray("results");
-                ArrayList<Person> people = new ArrayList<>();
-                for (int i = 0; i < results.length(); i++) {
-                    Person person = Person.fromJson(results.getJSONObject(i));
-                    people.add(person);
-                }
-
-                return people;
-
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<Person> result) {
-            Log.d(TAG, "AsyncTask onPostExecute()");
-            showProgress(false);
-            showPeople(result);
         }
     }
 }
