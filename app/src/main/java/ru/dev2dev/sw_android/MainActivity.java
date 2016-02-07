@@ -11,10 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -85,20 +81,11 @@ public class MainActivity extends BaseActivity {
                         .url(url)
                         .addHeader("User-Agent", "ws-sw-android-" + Build.VERSION.RELEASE)
                         .build();
+
                 Response response = client.newCall(request).execute();
-                String body = response.body().string();
+                return Person.getList(response.body().string());
 
-                JSONObject jsonObject = new JSONObject(body);
-                JSONArray results = jsonObject.getJSONArray("results");
-                ArrayList<Person> people = new ArrayList<>();
-                for (int i = 0; i < results.length(); i++) {
-                    Person person = Person.fromJson(results.getJSONObject(i));
-                    people.add(person);
-                }
-
-                return people;
-
-            } catch (IOException | JSONException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
