@@ -1,8 +1,11 @@
 package ru.dev2dev.sw_android;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.io.Serializable;
 
 public class Person implements Serializable {
+    private static final long serialVersionUID = 13L;
 
     private String name;
     private String height;
@@ -11,10 +14,7 @@ public class Person implements Serializable {
     private String birthYear;
     private String gender;
 
-    public Person() {}
-
-    public Person(String name, String height, String mass, String eyeColor, String birthYear,
-                  String gender) {
+    public Person(String name, String height, String mass, String eyeColor, String birthYear, String gender) {
         this.name = name;
         this.height = height;
         this.mass = mass;
@@ -69,5 +69,21 @@ public class Person implements Serializable {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    public static Person fromJson(JSONObject json) throws JSONException {
+        String name = json.getString("name");
+        String height = json.getString("height");
+        String mass = json.getString("mass");
+        String eyeColor = json.getString("eye_color");
+        String birthYear = json.getString("birth_year");
+        String gender = json.getString("gender");
+
+        return new Person(name, height, mass, eyeColor, birthYear, gender);
     }
 }

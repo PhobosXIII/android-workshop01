@@ -12,8 +12,8 @@
 
         <ImageView
             android:id="@+id/iv_portrait"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
+            android:layout_width="@dimen/person_image_size"
+            android:layout_height="@dimen/person_image_size"
             android:src="@drawable/ic_placeholder"/>
 
         <LinearLayout
@@ -26,22 +26,22 @@
                 android:id="@+id/tv_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Name"
-                android:textAppearance="?android:textAppearanceLarge"/>
+                android:text="@string/placeholder_name"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
 
             <TextView
                 android:id="@+id/tv_gender"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Gender"
-                android:textAppearance="?android:textAppearanceMedium"/>
+                android:text="@string/placeholder_gender"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
 
             <TextView
                 android:id="@+id/tv_birth"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Birth"
-                android:textAppearance="?android:textAppearanceMedium"/>
+                android:text="@string/placeholder_birth"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -49,7 +49,7 @@
         android:id="@+id/tv_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Additional information"
-        android:textAppearance="?android:textAppearanceMedium"/>
-
+        android:text="@string/placeholder_info"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:layout_marginTop="@dimen/spacing_small"/>
 </LinearLayout>

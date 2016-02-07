@@ -8,6 +8,7 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -20,7 +21,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-
 public class MainActivity extends BaseActivity {
     private ListView listView;
     private ProgressBar progressBar;
@@ -30,24 +30,26 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        listView = (ListView) findViewById(R.id.listView);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        listView = (ListView) findViewById(R.id.list_view);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Person person = (Person) listView.getAdapter().getItem(position);
                 Intent intent = new Intent(getApplicationContext(), PersonActivity.class)
-                        .putExtra(PersonActivity.PERSON_EXTRA, person);
+                        .putExtra(PersonActivity.EXTRA_PERSON, person);
                 startActivity(intent);
             }
         });
         new GetPeopleTask().execute();
+        showProgress(true);
     }
-
     private void showPeople(ArrayList<Person> people) {
+        showProgress(false);
         if (people != null) {
-            PersonAdapter adapter = new PersonAdapter(this, people);
+            ArrayAdapter<Person> adapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_list_item_1, people);
             listView.setAdapter(adapter);
         }
     }
