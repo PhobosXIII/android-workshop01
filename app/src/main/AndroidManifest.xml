@@ -20,7 +20,7 @@
         </activity>
 
         <activity android:name=".PersonActivity"
-            android:label="@string/person"/>
+            android:label="@string/title_person_activity"/>
     </application>
 
 </manifest>
