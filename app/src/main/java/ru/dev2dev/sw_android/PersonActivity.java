@@ -1,6 +1,5 @@
 package ru.dev2dev.sw_android;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.widget.TextView;
@@ -18,12 +17,12 @@ public class PersonActivity extends BaseActivity {
         TextView tvBirth = (TextView) findViewById(R.id.tv_birth);
         TextView tvInfo = (TextView) findViewById(R.id.tv_info);
 
-        Intent intent = getIntent();
-        if (intent.hasExtra(EXTRA_PERSON)) {
-            Person person = (Person) intent.getSerializableExtra(EXTRA_PERSON);
+        Person person = (Person) getIntent().getSerializableExtra(EXTRA_PERSON);
+        if (person != null) {
             tvName.setText(person.getName());
             tvGender.setText(person.getGender());
             tvBirth.setText(person.getBirthYear());
+
             String info = String.format(getResources().getString(R.string.info),
                     person.getHeight(), person.getMass(), person.getEyeColor());
             tvInfo.setText(info);
