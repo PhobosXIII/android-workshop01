@@ -75,15 +75,15 @@ public class MainActivity extends BaseActivity {
 
             String url = "http://swapi.co/api/people/";
             OkHttpClient client = new OkHttpClient();
-
+            Request request = new Request.Builder()
+                    .url(url)
+                    .addHeader("User-Agent", "ws-sw-android-" + Build.VERSION.RELEASE)
+                    .build();
             try {
-                Request request = new Request.Builder()
-                        .url(url)
-                        .addHeader("User-Agent", "ws-sw-android-" + Build.VERSION.RELEASE)
-                        .build();
-
                 Response response = client.newCall(request).execute();
-                return Person.getList(response.body().string());
+                if (response.isSuccessful()) {
+                    return Person.getList(response.body().string());
+                }
 
             } catch (IOException e) {
                 e.printStackTrace();
