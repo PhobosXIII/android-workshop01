@@ -7,10 +7,6 @@ import android.os.Build;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -42,33 +38,22 @@ public class SwService extends IntentService {
             String url = "http://swapi.co/api/people/";
             OkHttpClient client = new OkHttpClient();
 
+            Request request = new Request.Builder()
+                    .url(url)
+                    .addHeader("User-Agent", "ws-sw-android-" + Build.VERSION.RELEASE)
+                    .build();
             try {
-                Request request = new Request.Builder()
-                        .url(url)
-                        .addHeader("User-Agent", "ws-sw-android-" + Build.VERSION.RELEASE)
-                        .build();
-
                 Response response = client.newCall(request).execute();
-                jsonPeople = response.body().string();
-                Prefs.savePeople(this, jsonPeople);
+                if (response.isSuccessful()) {
+                    jsonPeople = response.body().string();
+                    Prefs.savePeople(this, jsonPeople);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        ArrayList<Person> people = null;
-        try {
-            JSONObject jsonObject = new JSONObject(jsonPeople);
-            JSONArray results = jsonObject.getJSONArray("results");
-            people = new ArrayList<>();
-            for (int i = 0; i < results.length(); i++) {
-                Person person = Person.fromJson(results.getJSONObject(i));
-                people.add(person);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
+        ArrayList<Person> people = Person.getList(jsonPeople);
         Intent peopleIntent = new Intent().setAction(ACTION_GET_PEOPLE).putExtra(EXTRA_PEOPLE, people);
         LocalBroadcastManager.getInstance(this).sendBroadcast(peopleIntent);
 
