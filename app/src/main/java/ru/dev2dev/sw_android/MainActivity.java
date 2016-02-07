@@ -42,9 +42,10 @@ public class MainActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
+
         new GetPeopleTask().execute();
-        showProgress(true);
     }
+
     private void showPeople(ArrayList<Person> people) {
         showProgress(false);
         if (people != null) {
@@ -99,7 +100,7 @@ public class MainActivity extends BaseActivity {
                     JSONArray results = jsonObject.getJSONArray("results");
                     ArrayList<Person> people = new ArrayList<>();
                     for (int i = 0; i < results.length(); i++) {
-                        Person person = jsonToPerson(results.getJSONObject(i));
+                        Person person = Person.fromJson(results.getJSONObject(i));
                         people.add(person);
                     }
 
@@ -126,22 +127,6 @@ public class MainActivity extends BaseActivity {
             Log.d(TAG, "AsyncTask onPostExecute()");
             showProgress(false);
             showPeople(result);
-        }
-    }
-
-    private Person jsonToPerson(JSONObject jsonObject) {
-        try {
-            String name = jsonObject.getString("name");
-            String height = jsonObject.getString("height");
-            String mass = jsonObject.getString("mass");
-            String eyeColor = jsonObject.getString("eye_color");
-            String birthYear = jsonObject.getString("birth_year");
-            String gender = jsonObject.getString("gender");
-
-            return new Person(name, height, mass, eyeColor, birthYear, gender);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
         }
     }
 }
