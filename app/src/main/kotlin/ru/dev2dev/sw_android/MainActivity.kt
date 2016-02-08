@@ -7,15 +7,24 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.support.v4.content.LocalBroadcastManager
 import android.view.View
+import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
 class MainActivity : BaseActivity() {
     private val peopleReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val people = intent.getSerializableExtra(SwService.EXTRA_PEOPLE) as ArrayList<Person>?
-            showPeople(people)
+            if (intent.hasExtra(SwService.EXTRA_PEOPLE)) {
+                val people = intent.getSerializableExtra(SwService.EXTRA_PEOPLE) as ArrayList<Person>
+                showPeople(people)
+            }
+            if (intent.hasExtra(SwService.EXTRA_ERROR)) {
+                val error = intent.getStringExtra(SwService.EXTRA_ERROR)
+                showError(error)
+            }
         }
     }
 
@@ -44,13 +53,21 @@ class MainActivity : BaseActivity() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(peopleReceiver)
     }
 
-    private fun showPeople(people: ArrayList<Person>?) {
+    private fun showPeople(people: ArrayList<Person>) {
         showProgress(false)
-        if (people != null) {
-            val adapter = ArrayAdapter(this,
-                    android.R.layout.simple_list_item_1, people)
-            listView.adapter = adapter
-        }
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, people)
+        listView.adapter = adapter
+    }
+
+    private fun showError(error: String) {
+        showProgress(false)
+        var tv = TextView(this)
+        tv.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+        tv.setTextAppearance(R.style.TextAppearance_AppCompat_Title)
+        tv.text = error
+        tv.visibility = View.GONE
+        (listView.parent as ViewGroup).addView(tv)
+        listView.emptyView = tv
     }
 
     private fun showProgress(isShow: Boolean) {

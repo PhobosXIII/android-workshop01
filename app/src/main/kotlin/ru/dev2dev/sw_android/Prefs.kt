@@ -15,7 +15,7 @@ object Prefs {
         getPrefs(context).edit().putString(KEY_PEOPLE, people).apply()
     }
 
-    fun getPeople(context: Context): String? {
-        return getPrefs(context).getString(KEY_PEOPLE, null)
+    fun getPeople(context: Context): String {
+        return getPrefs(context).getString(KEY_PEOPLE, "")
     }
 }

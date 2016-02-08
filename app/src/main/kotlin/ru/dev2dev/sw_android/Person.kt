@@ -1,6 +1,5 @@
 package ru.dev2dev.sw_android
 
-import android.text.TextUtils
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.Serializable
@@ -32,22 +31,14 @@ data class Person(val name: String,
             return Person(name, height, mass, eyeColor, birthYear, gender)
         }
 
-        fun getList(json: String?): ArrayList<Person>? {
-            var people: ArrayList<Person>? = null
-
-            if (!TextUtils.isEmpty(json)) {
-                try {
-                    val jsonObject = JSONObject(json)
-                    val results = jsonObject.getJSONArray("results")
-                    people = ArrayList<Person>()
-                    for (i in 0..results.length() - 1) {
-                        val person = Person.fromJson(results.getJSONObject(i))
-                        people.add(person)
-                    }
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-
+        @Throws(JSONException::class)
+        fun getList(json: String): ArrayList<Person> {
+            val jsonObject = JSONObject(json)
+            val results = jsonObject.getJSONArray("results")
+            var people = ArrayList<Person>(results.length())
+            for (i in 0..results.length() - 1) {
+                val person = Person.fromJson(results.getJSONObject(i))
+                people.add(person)
             }
 
             return people
