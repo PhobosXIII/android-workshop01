@@ -12,6 +12,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -40,6 +42,7 @@ public class MainActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
+
         new GetPeopleTask().execute();
     }
 
@@ -57,9 +60,8 @@ public class MainActivity extends BaseActivity {
     }
 
     private void showProgress(boolean isShow) {
-            listView.setVisibility(isShow ? View.GONE : View.VISIBLE);
-            progressBar.setVisibility(isShow ? View.VISIBLE : View.GONE);
-        }
+        listView.setVisibility(isShow ? View.GONE : View.VISIBLE);
+        progressBar.setVisibility(isShow ? View.VISIBLE : View.GONE);
     }
 
     private class GetPeopleTask extends AsyncTask<Void, Void, ArrayList<Person>> {
@@ -69,6 +71,7 @@ public class MainActivity extends BaseActivity {
             Log.d(TAG, "AsyncTask onPreExecute()");
             showProgress(true);
         }
+
         @Override
         protected ArrayList<Person> doInBackground(Void... params) {
             Log.d(TAG, "AsyncTask doInBackground()");
@@ -84,8 +87,7 @@ public class MainActivity extends BaseActivity {
                 if (response.isSuccessful()) {
                     return Person.getList(response.body().string());
                 }
-
-            } catch (IOException e) {
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
 
@@ -95,7 +97,11 @@ public class MainActivity extends BaseActivity {
         @Override
         protected void onPostExecute(ArrayList<Person> result) {
             Log.d(TAG, "AsyncTask onPostExecute()");
-            showProgress(false);
+            if (result == null) {
+                showError("Something wrong");
+                return;
+            }
             showPeople(result);
+        }
     }
 }
