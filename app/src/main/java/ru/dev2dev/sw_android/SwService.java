@@ -7,6 +7,8 @@ import android.os.Build;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -18,7 +20,8 @@ public class SwService extends IntentService {
     private static final String TAG = SwService.class.getSimpleName();
 
     public static final String ACTION_GET_PEOPLE = "get_people";
-    public static final String EXTRA_PEOPLE = "people";
+    public static final String EXTRA_SUCCESS = "success";
+    public static final String EXTRA_ERROR = "error";
 
     public static void getPeople(Context context) {
         Intent intent = new Intent(context, SwService.class);
@@ -50,13 +53,26 @@ public class SwService extends IntentService {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+                Intent errorIntent = new Intent().putExtra(EXTRA_ERROR, "Problem with network.");
+                send(errorIntent);
+                return;
             }
         }
 
-        ArrayList<Person> people = Person.getList(jsonPeople);
-        Intent peopleIntent = new Intent().setAction(ACTION_GET_PEOPLE).putExtra(EXTRA_PEOPLE, people);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(peopleIntent);
+        try {
+            ArrayList<Person> people = Person.getList(jsonPeople);
+            Intent successIntent = new Intent().putExtra(EXTRA_SUCCESS, people);
+            send(successIntent);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Intent errorIntent = new Intent().putExtra(EXTRA_ERROR, "Problem with JSON.");
+            send(errorIntent);
+        }
+    }
 
+    private void send(Intent intent) {
+        intent.setAction(ACTION_GET_PEOPLE);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         Log.d(TAG, "Sending broadcast intent");
     }
 }

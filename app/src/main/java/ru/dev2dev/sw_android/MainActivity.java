@@ -22,8 +22,14 @@ public class MainActivity extends BaseActivity {
     private BroadcastReceiver peopleReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            ArrayList<Person> people = (ArrayList<Person>) intent.getSerializableExtra(SwService.EXTRA_PEOPLE);
-            showPeople(people);
+            if (intent.hasExtra(SwService.EXTRA_SUCCESS)) {
+                ArrayList<Person> people = (ArrayList<Person>) intent.getSerializableExtra(SwService.EXTRA_SUCCESS);
+                showPeople(people);
+            }
+            if (intent.hasExtra(SwService.EXTRA_ERROR)) {
+                String error = intent.getStringExtra(SwService.EXTRA_ERROR);
+                showError(error);
+            }
         }
     };
 
@@ -46,8 +52,8 @@ public class MainActivity extends BaseActivity {
         });
     }
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
         IntentFilter ifPeople = new IntentFilter(SwService.ACTION_GET_PEOPLE);
         LocalBroadcastManager.getInstance(this).registerReceiver(peopleReceiver, ifPeople);
 
@@ -56,8 +62,8 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(peopleReceiver);
     }
 
