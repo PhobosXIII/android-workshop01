@@ -1,7 +1,9 @@
 package ru.dev2dev.sw_android;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class PersonActivity extends BaseActivity {
@@ -12,6 +14,7 @@ public class PersonActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_person);
 
+        ImageView ivPortrait = (ImageView) findViewById(R.id.iv_portrait);
         TextView tvName = (TextView) findViewById(R.id.tv_name);
         TextView tvGender = (TextView) findViewById(R.id.tv_gender);
         TextView tvBirth = (TextView) findViewById(R.id.tv_birth);
@@ -26,6 +29,25 @@ public class PersonActivity extends BaseActivity {
             String info = String.format(getResources().getString(R.string.info),
                     person.getHeight(), person.getMass(), person.getEyeColor());
             tvInfo.setText(info);
+
+            int color = Color.TRANSPARENT;
+            switch (person.getEyeColor()) {
+                case "blue":
+                    color = Color.BLUE;
+                    break;
+
+                case "red":
+                    color = Color.RED;
+                    break;
+
+                case "yellow":
+                    color = Color.YELLOW;
+                    break;
+
+                default:
+                    break;
+            }
+            ivPortrait.setBackgroundColor(color);
         }
     }
 }
