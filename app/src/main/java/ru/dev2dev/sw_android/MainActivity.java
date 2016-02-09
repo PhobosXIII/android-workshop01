@@ -7,6 +7,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -26,31 +27,28 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Person person = (Person) listView.getAdapter().getItem(position);
-                Intent intent = new Intent(getApplicationContext(), PersonActivity.class)
+                Intent intent = new Intent(MainActivity.this, PersonActivity.class)
                         .putExtra(PersonActivity.EXTRA_PERSON, person);
                 startActivity(intent);
             }
         });
-
-        showPeople(null);
     }
 
     private void showPeople(ArrayList<Person> people) {
         showProgress(false);
-        if (people != null) {
-            ArrayAdapter<Person> adapter = new ArrayAdapter<>(this,
-                    android.R.layout.simple_list_item_1, people);
-            listView.setAdapter(adapter);
-        }
+        ArrayAdapter<Person> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, people);
+        listView.setAdapter(adapter);
+
+    }
+
+    private void showError(String error) {
+        showProgress(false);
+        Toast.makeText(this, error, Toast.LENGTH_LONG).show();
     }
 
     private void showProgress(boolean isShow) {
-        if (isShow) {
-            listView.setVisibility(View.GONE);
-            progressBar.setVisibility(View.VISIBLE);
-        } else {
-            listView.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.GONE);
-        }
+            listView.setVisibility(isShow ? View.GONE : View.VISIBLE);
+            progressBar.setVisibility(isShow ? View.VISIBLE : View.GONE);
     }
 }

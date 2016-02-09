@@ -1,7 +1,5 @@
 package ru.dev2dev.sw_android;
 
-import android.text.TextUtils;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -92,21 +90,13 @@ public class Person implements Serializable {
         return new Person(name, height, mass, eyeColor, birthYear, gender);
     }
 
-    public static ArrayList<Person> getList(String json) {
-        ArrayList<Person> people = null;
-
-        if (!TextUtils.isEmpty(json)) {
-            try {
-                JSONObject jsonObject = new JSONObject(json);
-                JSONArray results = jsonObject.getJSONArray("results");
-                people = new ArrayList<>();
-                for (int i = 0; i < results.length(); i++) {
-                    Person person = Person.fromJson(results.getJSONObject(i));
-                    people.add(person);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+    public static ArrayList<Person> getList(String json) throws JSONException {
+        JSONObject jsonObject = new JSONObject(json);
+        JSONArray results = jsonObject.getJSONArray("results");
+        ArrayList<Person> people = new ArrayList<>(results.length());
+        for (int i = 0; i < results.length(); i++) {
+            Person person = Person.fromJson(results.getJSONObject(i));
+            people.add(person);
         }
 
         return people;
