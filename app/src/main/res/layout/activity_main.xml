@@ -12,15 +12,5 @@
     android:gravity="center"
     tools:context="ru.dev2dev.sw_android.MainActivity">
 
-    <ListView
-        android:id="@+id/list_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        tools:visibility="visible"/>
-
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <include layout="@layout/list_with_progress" />
 </LinearLayout>

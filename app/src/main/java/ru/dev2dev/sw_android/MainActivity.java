@@ -1,5 +1,6 @@
 package ru.dev2dev.sw_android;
 
+import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,8 +17,12 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class MainActivity extends BaseActivity {
+    private static final String KEY_POSITION = "position";
+
     private ListView listView;
     private ProgressBar progressBar;
+    private boolean twoPane;
+    private int position = ListView.INVALID_POSITION;
 
     private BroadcastReceiver peopleReceiver = new BroadcastReceiver() {
         @Override
@@ -40,25 +45,41 @@ public class MainActivity extends BaseActivity {
 
         listView = (ListView) findViewById(R.id.list_view);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        if (findViewById(R.id.person_container) != null) {
+            twoPane = true;
+            listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        }
+
+        if (savedInstanceState != null) {
+            position = savedInstanceState.getInt(KEY_POSITION, ListView.INVALID_POSITION);
+        }
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Person person = (Person) listView.getAdapter().getItem(position);
-                Intent intent = new Intent(MainActivity.this, PersonActivity.class)
-                        .putExtra(PersonActivity.EXTRA_PERSON, person);
-                startActivity(intent);
+                if (MainActivity.this.position != position) {
+                    showPerson(position);
+                }
             }
         });
+
+        showProgress(true);
+        SwService.getPeople(this);
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (position != ListView.INVALID_POSITION) {
+            outState.putInt(KEY_POSITION, position);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
         IntentFilter ifPeople = new IntentFilter(SwService.ACTION_GET_PEOPLE);
         LocalBroadcastManager.getInstance(this).registerReceiver(peopleReceiver, ifPeople);
-
-        showProgress(true);
-        SwService.getPeople(this);
     }
 
     @Override
@@ -70,8 +91,13 @@ public class MainActivity extends BaseActivity {
     private void showPeople(ArrayList<Person> people) {
         showProgress(false);
         ArrayAdapter<Person> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, people);
+                android.R.layout.simple_list_item_activated_1, people);
         listView.setAdapter(adapter);
+        if (position != ListView.INVALID_POSITION) {
+            showPerson(position);
+            listView.setSelection(position);
+            listView.setItemChecked(position, true);
+        }
 
     }
 
@@ -83,5 +109,27 @@ public class MainActivity extends BaseActivity {
     private void showProgress(boolean isShow) {
         listView.setVisibility(isShow ? View.GONE : View.VISIBLE);
         progressBar.setVisibility(isShow ? View.VISIBLE : View.GONE);
+    }
+
+    private void showPerson(int position) {
+        this.position = position;
+        Person person = (Person) listView.getAdapter().getItem(position);
+
+        Bundle args = new Bundle();
+        args.putSerializable(PersonActivity.EXTRA_PERSON, person);
+
+        if (twoPane) {
+            PersonFragment personFragment = new PersonFragment();
+            personFragment.setArguments(args);
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.person_container, personFragment)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .commit();
+        }
+        else {
+            Intent intent = new Intent(MainActivity.this, PersonActivity.class)
+                    .putExtras(args);
+            startActivity(intent);
+        }
     }
 }
