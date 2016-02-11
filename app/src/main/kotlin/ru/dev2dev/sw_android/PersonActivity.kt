@@ -1,7 +1,6 @@
 package ru.dev2dev.sw_android
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_person.*
 
@@ -20,13 +19,14 @@ class PersonActivity : BaseActivity() {
         val info = getString(R.string.info, person.height, person.mass, person.eyeColor)
         tvInfo.text = info
 
+        var color = Color.TRANSPARENT
         when(person.eyeColor) {
-            "black" -> supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.BLACK))
-            "yellow" -> supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.YELLOW))
-            "red" -> supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.RED))
-            "brown" -> supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.rgb(79, 55, 48)))
-            "blue" -> supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.BLUE))
+            "yellow" -> color = Color.YELLOW
+            "red" -> color = Color.RED
+            "brown" -> color = Color.rgb(79, 55, 48)
+            "blue" -> color = Color.BLUE
         }
+        ivPortrait.setBackgroundColor(color)
     }
 
     companion object {

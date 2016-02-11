@@ -7,10 +7,8 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.support.v4.content.LocalBroadcastManager
 import android.view.View
-import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams
 import android.widget.ArrayAdapter
-import android.widget.TextView
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
@@ -32,6 +30,9 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        showProgress(true)
+        SwService.getPeople(this)
+
         listView.setOnItemClickListener({ parent, view, position, id ->
             val person = listView.adapter.getItem(position) as Person
             val intent = Intent(this, PersonActivity::class.java).putExtra(PersonActivity.EXTRA_PERSON, person)
@@ -39,17 +40,14 @@ class MainActivity : BaseActivity() {
         })
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
         val ifPeople = IntentFilter(SwService.ACTION_GET_PEOPLE)
         LocalBroadcastManager.getInstance(this).registerReceiver(peopleReceiver, ifPeople)
-
-        showProgress(true)
-        SwService.getPeople(this)
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(peopleReceiver)
     }
 
@@ -61,13 +59,7 @@ class MainActivity : BaseActivity() {
 
     private fun showError(error: String) {
         showProgress(false)
-        var tv = TextView(this)
-        tv.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-        tv.setTextAppearance(R.style.TextAppearance_AppCompat_Title)
-        tv.text = error
-        tv.visibility = View.GONE
-        (listView.parent as ViewGroup).addView(tv)
-        listView.emptyView = tv
+        Toast.makeText(this, error, Toast.LENGTH_LONG).show();
     }
 
     private fun showProgress(isShow: Boolean) {
