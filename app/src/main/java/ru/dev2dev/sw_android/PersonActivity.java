@@ -30,24 +30,12 @@ public class PersonActivity extends BaseActivity {
                     person.getHeight(), person.getMass(), person.getEyeColor());
             tvInfo.setText(info);
 
-            int color = Color.TRANSPARENT;
-            switch (person.getEyeColor()) {
-                case "blue":
-                    color = Color.BLUE;
-                    break;
-
-                case "red":
-                    color = Color.RED;
-                    break;
-
-                case "yellow":
-                    color = Color.YELLOW;
-                    break;
-
-                default:
-                    break;
+            try {
+                int color = Color.parseColor(person.getEyeColor());
+                ivPortrait.setBackgroundColor(color);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
             }
-            ivPortrait.setBackgroundColor(color);
         }
     }
 }
