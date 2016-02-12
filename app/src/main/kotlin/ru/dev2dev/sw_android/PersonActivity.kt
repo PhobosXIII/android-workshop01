@@ -19,14 +19,12 @@ class PersonActivity : BaseActivity() {
         val info = getString(R.string.info, person.height, person.mass, person.eyeColor)
         tvInfo.text = info
 
-        var color = Color.TRANSPARENT
-        when(person.eyeColor) {
-            "yellow" -> color = Color.YELLOW
-            "red" -> color = Color.RED
-            "brown" -> color = Color.rgb(79, 55, 48)
-            "blue" -> color = Color.BLUE
+        try {
+            val color = Color.parseColor(person.eyeColor)
+            ivPortrait.setBackgroundColor(color)
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
         }
-        ivPortrait.setBackgroundColor(color)
     }
 
     companion object {
