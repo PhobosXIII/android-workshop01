@@ -36,14 +36,18 @@ public class MainActivity extends BaseActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Person person = (Person) listView.getAdapter().getItem(position);
-                Intent intent = new Intent(MainActivity.this, PersonActivity.class)
-                        .putExtra(PersonActivity.EXTRA_PERSON, person);
-                startActivity(intent);
+                showPerson(position);
             }
         });
 
         new GetPeopleTask().execute();
+    }
+
+    private void showPerson(int position) {
+        Person person = (Person) listView.getAdapter().getItem(position);
+        Intent intent = new Intent(MainActivity.this, PersonActivity.class)
+                .putExtra(PersonActivity.EXTRA_PERSON, person);
+        startActivity(intent);
     }
 
     private void showPeople(ArrayList<Person> people) {
@@ -64,7 +68,7 @@ public class MainActivity extends BaseActivity {
         progressBar.setVisibility(isShow ? View.VISIBLE : View.GONE);
     }
 
-    private class GetPeopleTask extends AsyncTask<Void, Void, ArrayList<Person>> {
+    private class GetPeopleTask extends AsyncTask<Void, Void, PeopleResult> {
 
         @Override
         protected void onPreExecute() {
@@ -73,9 +77,10 @@ public class MainActivity extends BaseActivity {
         }
 
         @Override
-        protected ArrayList<Person> doInBackground(Void... params) {
+        protected PeopleResult doInBackground(Void... params) {
             Log.d(TAG, "AsyncTask doInBackground()");
 
+            PeopleResult result = new PeopleResult();
             String url = "http://swapi.co/api/people/";
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
@@ -85,23 +90,28 @@ public class MainActivity extends BaseActivity {
             try {
                 Response response = client.newCall(request).execute();
                 if (response.isSuccessful()) {
-                    return Person.getList(response.body().string());
+                    String body = response.body().string();
+                    Log.d(TAG, body);
+                    result.setPeople(Person.getList(body));
                 }
             } catch (IOException | JSONException e) {
-                e.printStackTrace();
+                Log.e(TAG, "doInBackground: ", e);
+                result.setError("Something wrong");
             }
 
-            return null;
+            return result;
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Person> result) {
+        protected void onPostExecute(PeopleResult result) {
             Log.d(TAG, "AsyncTask onPostExecute()");
-            if (result == null) {
-                showError("Something wrong");
+            if (result.getError() != null) {
+                showError(result.getError());
                 return;
             }
-            showPeople(result);
+            if (result.getPeople() != null) {
+                showPeople(result.getPeople());
+            }
         }
     }
 }
