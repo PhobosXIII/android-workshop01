@@ -11,10 +11,11 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/iv_portrait"
+            android:id="@+id/portrait"
             android:layout_width="@dimen/person_image_size"
             android:layout_height="@dimen/person_image_size"
-            android:src="@drawable/ic_placeholder"/>
+            android:src="@drawable/ic_placeholder"
+            android:scaleType="center"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -23,21 +24,21 @@
             android:layout_marginLeft="@dimen/activity_horizontal_margin">
 
             <TextView
-                android:id="@+id/tv_name"
+                android:id="@+id/name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/placeholder_name"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline"/>
 
             <TextView
-                android:id="@+id/tv_gender"
+                android:id="@+id/gender"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/placeholder_gender"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
 
             <TextView
-                android:id="@+id/tv_birth"
+                android:id="@+id/birth_year"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/placeholder_birth"
@@ -46,7 +47,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/tv_info"
+        android:id="@+id/info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/placeholder_info"

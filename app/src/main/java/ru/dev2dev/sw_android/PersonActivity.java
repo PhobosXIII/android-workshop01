@@ -3,38 +3,39 @@ package ru.dev2dev.sw_android;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 public class PersonActivity extends BaseActivity {
-    public static final String EXTRA_PERSON = "person";
+    public static final String EXTRA_PERSON = "ru.dev2dev.sw_android.PERSON";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_person);
 
-        ImageView ivPortrait = (ImageView) findViewById(R.id.iv_portrait);
-        TextView tvName = (TextView) findViewById(R.id.tv_name);
-        TextView tvGender = (TextView) findViewById(R.id.tv_gender);
-        TextView tvBirth = (TextView) findViewById(R.id.tv_birth);
-        TextView tvInfo = (TextView) findViewById(R.id.tv_info);
+        ImageView portraitView = (ImageView) findViewById(R.id.portrait);
+        TextView nameView = (TextView) findViewById(R.id.name);
+        TextView genderView = (TextView) findViewById(R.id.gender);
+        TextView birthView = (TextView) findViewById(R.id.birth_year);
+        TextView infoView = (TextView) findViewById(R.id.info);
 
         Person person = (Person) getIntent().getSerializableExtra(EXTRA_PERSON);
         if (person != null) {
-            tvName.setText(person.getName());
-            tvGender.setText(person.getGender());
-            tvBirth.setText(person.getBirthYear());
+            nameView.setText(person.getName());
+            genderView.setText(person.getGender());
+            birthView.setText(person.getBirthYear());
 
-            String info = String.format(getResources().getString(R.string.info),
+            String info = String.format(getResources().getString(R.string.info_format),
                     person.getHeight(), person.getMass(), person.getEyeColor());
-            tvInfo.setText(info);
+            infoView.setText(info);
 
             try {
                 int color = Color.parseColor(person.getEyeColor());
-                ivPortrait.setBackgroundColor(color);
+                portraitView.setBackgroundColor(color);
             } catch (IllegalArgumentException e) {
-                e.printStackTrace();
+                Log.e(TAG, "onCreate: ", e);
             }
         }
     }
