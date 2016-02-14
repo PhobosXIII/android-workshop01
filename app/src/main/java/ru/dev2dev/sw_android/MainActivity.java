@@ -30,8 +30,8 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        listView = (ListView) findViewById(R.id.list_view);
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        listView = (ListView) findViewById(R.id.list);
+        progressBar = (ProgressBar) findViewById(R.id.progress);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -41,6 +41,13 @@ public class MainActivity extends BaseActivity {
         });
 
         new GetPeopleTask().execute();
+    }
+
+    private void showPerson(int position) {
+        Person person = (Person) listView.getAdapter().getItem(position);
+        Intent intent = new Intent(MainActivity.this, PersonActivity.class)
+                .putExtra(PersonActivity.EXTRA_PERSON, person);
+        startActivity(intent);
     }
 
     private void showPerson(int position) {

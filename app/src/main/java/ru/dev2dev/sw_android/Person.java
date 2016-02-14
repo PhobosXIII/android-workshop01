@@ -22,15 +22,6 @@ public class Person implements Serializable {
     private String birthYear;
     private String gender;
 
-    public Person(String name, String height, String mass, String eyeColor, String birthYear, String gender) {
-        this.name = name;
-        this.height = height;
-        this.mass = mass;
-        this.eyeColor = eyeColor;
-        this.birthYear = birthYear;
-        this.gender = gender;
-    }
-
     public String getName() {
         return name;
     }
