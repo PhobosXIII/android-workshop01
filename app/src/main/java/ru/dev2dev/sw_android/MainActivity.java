@@ -22,13 +22,15 @@ public class MainActivity extends BaseActivity {
     private BroadcastReceiver peopleReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.hasExtra(SwService.EXTRA_SUCCESS)) {
-                ArrayList<Person> people = (ArrayList<Person>) intent.getSerializableExtra(SwService.EXTRA_SUCCESS);
-                showPeople(people);
-            }
-            if (intent.hasExtra(SwService.EXTRA_ERROR)) {
-                String error = intent.getStringExtra(SwService.EXTRA_ERROR);
-                showError(error);
+            PeopleResult result = (PeopleResult) intent.getSerializableExtra(SwService.EXTRA_RESULT);
+            if (result != null) {
+                if (result.getError() != null) {
+                    showError(result.getError());
+                    return;
+                }
+                if (result.getPeople() != null) {
+                    showPeople(result.getPeople());
+                }
             }
         }
     };
@@ -47,15 +49,15 @@ public class MainActivity extends BaseActivity {
                 showPerson(position);
             }
         });
+
+        showProgress(true);
+        SwService.getPeople(this);
     }
     @Override
     protected void onStart() {
         super.onStart();
         IntentFilter ifPeople = new IntentFilter(SwService.ACTION_GET_PEOPLE);
         LocalBroadcastManager.getInstance(this).registerReceiver(peopleReceiver, ifPeople);
-
-        showProgress(true);
-        SwService.getPeople(this);
     }
 
     @Override
