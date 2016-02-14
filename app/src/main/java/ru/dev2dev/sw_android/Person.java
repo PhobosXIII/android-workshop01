@@ -1,10 +1,16 @@
 package ru.dev2dev.sw_android;
 
-import org.json.JSONArray;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class Person implements Serializable {
@@ -79,26 +85,11 @@ public class Person implements Serializable {
         return name;
     }
 
-    public static Person fromJson(JSONObject json) throws JSONException {
-        String name = json.getString("name");
-        String height = json.getString("height");
-        String mass = json.getString("mass");
-        String eyeColor = json.getString("eye_color");
-        String birthYear = json.getString("birth_year");
-        String gender = json.getString("gender");
-
-        return new Person(name, height, mass, eyeColor, birthYear, gender);
-    }
-
     public static ArrayList<Person> getList(String json) throws JSONException {
-        JSONObject jsonObject = new JSONObject(json);
-        JSONArray results = jsonObject.getJSONArray("results");
-        ArrayList<Person> people = new ArrayList<>(results.length());
-        for (int i = 0; i < results.length(); i++) {
-            Person person = Person.fromJson(results.getJSONObject(i));
-            people.add(person);
-        }
-
-        return people;
+        Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+        JsonParser parser = new JsonParser();
+        JsonArray results = parser.parse(json).getAsJsonObject().getAsJsonArray("results");
+        Type collectionType = new TypeToken<ArrayList<Person>>(){}.getType();
+        return gson.fromJson(results, collectionType);
     }
 }
