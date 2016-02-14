@@ -19,9 +19,8 @@ import okhttp3.Response;
 public class SwService extends IntentService {
     private static final String TAG = SwService.class.getSimpleName();
 
-    public static final String ACTION_GET_PEOPLE = "get_people";
-    public static final String EXTRA_SUCCESS = "success";
-    public static final String EXTRA_ERROR = "error";
+    public static final String ACTION_GET_PEOPLE = "ru.dev2dev.sw_android.GET_PEOPLE";
+    public static final String EXTRA_RESULT = "ru.dev2dev.sw_android.RESULT";
 
     public static void getPeople(Context context) {
         Intent intent = new Intent(context, SwService.class);
@@ -36,42 +35,42 @@ public class SwService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Log.d(TAG, "Start retrieving data");
 
+        PeopleResult result = new PeopleResult();
         String jsonPeople = Prefs.getPeople(this);
-        if (jsonPeople == null) {
-            String url = "http://swapi.co/api/people/";
-            OkHttpClient client = new OkHttpClient();
+        try {
+            if (jsonPeople == null) {
+                String url = "http://swapi.co/api/people/";
+                OkHttpClient client = new OkHttpClient();
 
-            Request request = new Request.Builder()
-                    .url(url)
-                    .addHeader("User-Agent", "ws-sw-android-" + Build.VERSION.RELEASE)
-                    .build();
-            try {
+                Request request = new Request.Builder()
+                        .url(url)
+                        .addHeader("User-Agent", "ws-sw-android-" + Build.VERSION.RELEASE)
+                        .build();
+
                 Response response = client.newCall(request).execute();
                 if (response.isSuccessful()) {
                     jsonPeople = response.body().string();
                     Prefs.savePeople(this, jsonPeople);
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-                Intent errorIntent = new Intent().putExtra(EXTRA_ERROR, "Problem with network.");
-                send(errorIntent);
-                return;
             }
-        }
 
-        try {
             ArrayList<Person> people = Person.getList(jsonPeople);
-            Intent successIntent = new Intent().putExtra(EXTRA_SUCCESS, people);
-            send(successIntent);
+            result.setPeople(people);
+        } catch (IOException e) {
+            Log.e(TAG, "onHandleIntent: ", e);
+            result.setError("Problem with network.");
         } catch (JSONException e) {
-            e.printStackTrace();
-            Intent errorIntent = new Intent().putExtra(EXTRA_ERROR, "Problem with JSON.");
-            send(errorIntent);
+            Log.e(TAG, "onHandleIntent: ", e);
+            result.setError("Problem with JSON.");
+        } finally {
+            send(result);
         }
     }
 
-    private void send(Intent intent) {
-        intent.setAction(ACTION_GET_PEOPLE);
+    private void send(PeopleResult result) {
+        Intent intent = new Intent()
+                .setAction(ACTION_GET_PEOPLE)
+                .putExtra(EXTRA_RESULT, result);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         Log.d(TAG, "Sending broadcast intent");
     }

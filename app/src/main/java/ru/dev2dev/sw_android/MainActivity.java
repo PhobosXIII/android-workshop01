@@ -27,13 +27,15 @@ public class MainActivity extends BaseActivity {
     private BroadcastReceiver peopleReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.hasExtra(SwService.EXTRA_SUCCESS)) {
-                ArrayList<Person> people = (ArrayList<Person>) intent.getSerializableExtra(SwService.EXTRA_SUCCESS);
-                showPeople(people);
-            }
-            if (intent.hasExtra(SwService.EXTRA_ERROR)) {
-                String error = intent.getStringExtra(SwService.EXTRA_ERROR);
-                showError(error);
+            PeopleResult result = (PeopleResult) intent.getSerializableExtra(SwService.EXTRA_RESULT);
+            if (result != null) {
+                if (result.getError() != null) {
+                    showError(result.getError());
+                    return;
+                }
+                if (result.getPeople() != null) {
+                    showPeople(result.getPeople());
+                }
             }
         }
     };
@@ -43,8 +45,8 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        listView = (ListView) findViewById(R.id.list_view);
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        listView = (ListView) findViewById(R.id.list);
+        progressBar = (ProgressBar) findViewById(R.id.progress);
         if (findViewById(R.id.person_container) != null) {
             twoPane = true;
             listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -86,6 +88,13 @@ public class MainActivity extends BaseActivity {
     protected void onStop() {
         super.onStop();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(peopleReceiver);
+    }
+
+    private void showPerson(int position) {
+        Person person = (Person) listView.getAdapter().getItem(position);
+        Intent intent = new Intent(MainActivity.this, PersonActivity.class)
+                .putExtra(PersonActivity.EXTRA_PERSON, person);
+        startActivity(intent);
     }
 
     private void showPeople(ArrayList<Person> people) {
