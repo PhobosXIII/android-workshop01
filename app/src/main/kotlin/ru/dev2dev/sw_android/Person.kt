@@ -1,7 +1,10 @@
 package ru.dev2dev.sw_android
 
+import com.google.gson.FieldNamingPolicy
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonParser
+import com.google.gson.reflect.TypeToken
 import org.json.JSONException
-import org.json.JSONObject
 import java.io.Serializable
 import java.util.*
 
@@ -20,28 +23,12 @@ data class Person(val name: String,
         private val serialVersionUID = 13L
 
         @Throws(JSONException::class)
-        fun fromJson(json: JSONObject): Person {
-            val name = json.getString("name")
-            val height = json.getString("height")
-            val mass = json.getString("mass")
-            val eyeColor = json.getString("eye_color")
-            val birthYear = json.getString("birth_year")
-            val gender = json.getString("gender")
-
-            return Person(name, height, mass, eyeColor, birthYear, gender)
-        }
-
-        @Throws(JSONException::class)
         fun getList(json: String): ArrayList<Person> {
-            val jsonObject = JSONObject(json)
-            val results = jsonObject.getJSONArray("results")
-            var people = ArrayList<Person>(results.length())
-            for (i in 0..results.length() - 1) {
-                val person = Person.fromJson(results.getJSONObject(i))
-                people.add(person)
-            }
-
-            return people
+            val gson = GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+            val parser = JsonParser();
+            val results = parser.parse(json).getAsJsonObject().getAsJsonArray("results");
+            val collectionType = object : TypeToken<ArrayList<Person>>() {}.type;
+            return gson.fromJson(results, collectionType);
         }
     }
 }

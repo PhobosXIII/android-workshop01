@@ -18,35 +18,31 @@ class SwService : IntentService(SwService.TAG) {
         Log.d(TAG, "Start retrieving data")
 
         var jsonPeople: String = Prefs.getPeople(this)
-        if (TextUtils.isEmpty(jsonPeople)) {
-            val url = "http://swapi.co/api/people/"
-            val client = OkHttpClient()
-            val request = Request.Builder()
-                    .url(url)
-                    .addHeader("User-Agent", "ws-sw-android-" + Build.VERSION.RELEASE)
-                    .build()
+        try {
+            if (TextUtils.isEmpty(jsonPeople)) {
+                val url = "http://swapi.co/api/people/"
+                val client = OkHttpClient()
+                val request = Request.Builder()
+                        .url(url)
+                        .addHeader("User-Agent", "ws-sw-android-" + Build.VERSION.RELEASE)
+                        .build()
 
-            try {
                 val response = client.newCall(request).execute()
                 if (response.isSuccessful) {
                     jsonPeople = response.body().string()
                     Prefs.savePeople(this, jsonPeople)
                 }
-            } catch (e: IOException) {
-                e.printStackTrace()
-                val errorIntent = Intent().putExtra(EXTRA_ERROR, "IO exception!")
-                send(errorIntent)
-                return
             }
 
-        }
-
-        try {
             val people = Person.getList(jsonPeople)
             val successIntent = Intent().putExtra(EXTRA_PEOPLE, people)
             send(successIntent)
+        } catch (e: IOException) {
+            Log.e(TAG, "onHandleIntent ", e)
+            val errorIntent = Intent().putExtra(EXTRA_ERROR, "IO exception!")
+            send(errorIntent)
         } catch (e: JSONException) {
-            e.printStackTrace()
+            Log.e(TAG, "onHandleIntent ", e)
             val errorIntent = Intent().putExtra(EXTRA_ERROR, "JSON exception!")
             send(errorIntent)
         }
@@ -61,9 +57,9 @@ class SwService : IntentService(SwService.TAG) {
     companion object {
         private val TAG = SwService::class.java.simpleName
 
-        val ACTION_GET_PEOPLE = "get_people"
-        val EXTRA_PEOPLE = "people"
-        val EXTRA_ERROR = "error"
+        val ACTION_GET_PEOPLE = "ru.dev2dev.sw_android.GET_PEOPLE"
+        val EXTRA_PEOPLE = "ru.dev2dev.sw_android.PEOPLE"
+        val EXTRA_ERROR = "ru.dev2dev.sw_android.ERROR"
 
         fun getPeople(context: Context) {
             val intent = Intent(context, SwService::class.java)
