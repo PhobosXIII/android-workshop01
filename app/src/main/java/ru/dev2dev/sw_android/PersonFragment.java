@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +12,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class PersonFragment extends Fragment {
-    private Person person;
+    private static final String TAG = PersonFragment.class.getSimpleName();
 
-    private ImageView ivPortrait;
-    private TextView tvName;
-    private TextView tvGender;
-    private TextView tvBirth;
-    private TextView tvInfo;
+    private Person person;
+    private ImageView portraitView;
+    private TextView nameView;
+    private TextView genderView;
+    private TextView birthView;
+    private TextView infoView;
 
     public PersonFragment() {
     }
@@ -37,30 +39,30 @@ public class PersonFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ivPortrait = (ImageView) view.findViewById(R.id.iv_portrait);
-        tvName = (TextView) view.findViewById(R.id.tv_name);
-        tvGender = (TextView) view.findViewById(R.id.tv_gender);
-        tvBirth = (TextView) view.findViewById(R.id.tv_birth);
-        tvInfo = (TextView) view.findViewById(R.id.tv_info);
+        portraitView = (ImageView) view.findViewById(R.id.portrait);
+        nameView = (TextView) view.findViewById(R.id.name);
+        genderView = (TextView) view.findViewById(R.id.gender);
+        birthView = (TextView) view.findViewById(R.id.birth_year);
+        infoView = (TextView) view.findViewById(R.id.info);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (person != null) {
-            tvName.setText(person.getName());
-            tvGender.setText(person.getGender());
-            tvBirth.setText(person.getBirthYear());
+            nameView.setText(person.getName());
+            genderView.setText(person.getGender());
+            birthView.setText(person.getBirthYear());
 
-            String info = String.format(getResources().getString(R.string.info),
+            String info = getString(R.string.info_format,
                     person.getHeight(), person.getMass(), person.getEyeColor());
-            tvInfo.setText(info);
+            infoView.setText(info);
 
             try {
                 int color = Color.parseColor(person.getEyeColor());
-                ivPortrait.setBackgroundColor(color);
+                portraitView.setBackgroundColor(color);
             } catch (IllegalArgumentException e) {
-                e.printStackTrace();
+                Log.e(TAG, "onActivityCreated: ", e);
             }
         }
     }

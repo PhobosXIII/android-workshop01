@@ -9,15 +9,13 @@
     android:showDividers="middle"
     tools:context="ru.dev2dev.sw_android.MainActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
         android:layout_weight="1">
 
         <include layout="@layout/list_with_progress"/>
-    </LinearLayout>
+    </RelativeLayout>
 
     <FrameLayout
         android:id="@+id/person_container"

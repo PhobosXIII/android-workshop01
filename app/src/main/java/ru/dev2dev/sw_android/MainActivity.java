@@ -90,13 +90,6 @@ public class MainActivity extends BaseActivity {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(peopleReceiver);
     }
 
-    private void showPerson(int position) {
-        Person person = (Person) listView.getAdapter().getItem(position);
-        Intent intent = new Intent(MainActivity.this, PersonActivity.class)
-                .putExtra(PersonActivity.EXTRA_PERSON, person);
-        startActivity(intent);
-    }
-
     private void showPeople(ArrayList<Person> people) {
         showProgress(false);
         ArrayAdapter<Person> adapter = new ArrayAdapter<>(this,
