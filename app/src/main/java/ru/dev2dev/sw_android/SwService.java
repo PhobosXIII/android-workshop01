@@ -7,7 +7,7 @@ import android.os.Build;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import org.json.JSONException;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class SwService extends IntentService {
         } catch (IOException e) {
             Log.e(TAG, "onHandleIntent: ", e);
             result.setError("Problem with network.");
-        } catch (JSONException e) {
+        } catch (JsonSyntaxException e) {
             Log.e(TAG, "onHandleIntent: ", e);
             result.setError("Problem with JSON.");
         } finally {
