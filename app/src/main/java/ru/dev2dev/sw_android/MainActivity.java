@@ -12,7 +12,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import org.json.JSONException;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -94,7 +94,7 @@ public class MainActivity extends BaseActivity {
                     Log.d(TAG, body);
                     result.setPeople(Person.getList(body));
                 }
-            } catch (IOException | JSONException e) {
+            } catch (IOException | JsonSyntaxException e) {
                 Log.e(TAG, "doInBackground: ", e);
                 result.setError("Something wrong");
             }
