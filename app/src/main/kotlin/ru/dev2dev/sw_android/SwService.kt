@@ -7,9 +7,9 @@ import android.os.Build
 import android.support.v4.content.LocalBroadcastManager
 import android.text.TextUtils
 import android.util.Log
+import com.google.gson.JsonSyntaxException
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.json.JSONException
 import java.io.IOException
 
 class SwService : IntentService(SwService.TAG) {
@@ -41,7 +41,7 @@ class SwService : IntentService(SwService.TAG) {
             Log.e(TAG, "onHandleIntent ", e)
             val errorIntent = Intent().putExtra(EXTRA_ERROR, "IO exception!")
             send(errorIntent)
-        } catch (e: JSONException) {
+        } catch (e: JsonSyntaxException) {
             Log.e(TAG, "onHandleIntent ", e)
             val errorIntent = Intent().putExtra(EXTRA_ERROR, "JSON exception!")
             send(errorIntent)

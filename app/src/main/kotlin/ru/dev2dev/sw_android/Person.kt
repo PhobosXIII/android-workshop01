@@ -3,8 +3,8 @@ package ru.dev2dev.sw_android
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
+import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
-import org.json.JSONException
 import java.io.Serializable
 import java.util.*
 
@@ -22,7 +22,7 @@ data class Person(val name: String,
     companion object {
         private val serialVersionUID = 13L
 
-        @Throws(JSONException::class)
+        @Throws(JsonSyntaxException::class)
         fun getList(json: String): ArrayList<Person> {
             val gson = GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
             val parser = JsonParser();
