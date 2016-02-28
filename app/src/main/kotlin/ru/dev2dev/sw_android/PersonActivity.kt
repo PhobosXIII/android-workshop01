@@ -12,16 +12,17 @@ class PersonActivity : BaseActivity() {
         setContentView(R.layout.activity_person)
 
         val person = intent.getSerializableExtra(EXTRA_PERSON) as Person
+        val (name, height, mass, eyeColor, birthYear, gender) = person
 
-        tvName.text = person.name
-        tvGender.text = person.gender
-        tvBirth.text = person.birthYear
+        tvName.text = name
+        tvGender.text = gender
+        tvBirth.text = birthYear
 
-        val info = getString(R.string.info_format, person.height, person.mass, person.eyeColor)
+        val info = getString(R.string.info_format, height, mass, eyeColor)
         tvInfo.text = info
 
         try {
-            val color = Color.parseColor(person.eyeColor)
+            val color = Color.parseColor(eyeColor)
             ivPortrait.setBackgroundColor(color)
         } catch (e: IllegalArgumentException) {
             Log.e(TAG, "onCreate: ", e)
