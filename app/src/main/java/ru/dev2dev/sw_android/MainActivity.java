@@ -59,9 +59,7 @@ public class MainActivity extends BaseActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (MainActivity.this.position != position) {
-                    showPerson(position);
-                }
+                showPerson(position);
             }
         });
 
