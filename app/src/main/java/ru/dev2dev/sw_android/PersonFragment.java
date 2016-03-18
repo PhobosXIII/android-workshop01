@@ -1,9 +1,9 @@
 package ru.dev2dev.sw_android;
 
-import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 public class PersonFragment extends Fragment {
     private static final String TAG = PersonFragment.class.getSimpleName();
+    private static final String KEY_PERSON = "person";
 
     private Person person;
     private ImageView portraitView;
@@ -21,13 +22,18 @@ public class PersonFragment extends Fragment {
     private TextView birthView;
     private TextView infoView;
 
-    public PersonFragment() {
+    public static PersonFragment newInstance(Person person) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(KEY_PERSON, person);
+        PersonFragment fragment = new PersonFragment();
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        person = (Person) getArguments().getSerializable(PersonActivity.EXTRA_PERSON);
+        person = (Person) getArguments().getSerializable(KEY_PERSON);
     }
 
     @Nullable

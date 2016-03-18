@@ -1,11 +1,11 @@
 package ru.dev2dev.sw_android;
 
-import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.AdapterView;
@@ -114,21 +114,16 @@ public class MainActivity extends BaseActivity {
     private void showPerson(int position) {
         this.position = position;
         Person person = (Person) listView.getAdapter().getItem(position);
-
-        Bundle args = new Bundle();
-        args.putSerializable(PersonActivity.EXTRA_PERSON, person);
-
         if (twoPane) {
-            PersonFragment personFragment = new PersonFragment();
-            personFragment.setArguments(args);
-            getFragmentManager().beginTransaction()
+            PersonFragment personFragment = PersonFragment.newInstance(person);
+            getSupportFragmentManager().beginTransaction()
                     .replace(R.id.person_container, personFragment)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .commit();
         }
         else {
-            Intent intent = new Intent(MainActivity.this, PersonActivity.class)
-                    .putExtras(args);
+            Intent intent = new Intent(this, PersonActivity.class)
+                    .putExtra(PersonActivity.EXTRA_PERSON, person);
             startActivity(intent);
         }
     }
